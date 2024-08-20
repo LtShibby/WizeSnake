@@ -1,0 +1,2 @@
+# WizeSnake
+Snake game 
