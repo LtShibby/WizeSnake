@@ -10,8 +10,8 @@ A simple implementation of the classic Snake game using Pygame. The player contr
 - [Usage](#usage)
 - [Controls](#controls)
 - [Game Logic](#game-logic)
-- [License](#license)
 
+  
 ## Features
 
 - Classic Snake gameplay
