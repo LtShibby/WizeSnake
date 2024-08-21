@@ -191,9 +191,15 @@ def gameLoop(ai_mode=False):
     length_of_snake = 1  # Initial length of the snake
     score = 0  # Initialize score
 
-    # Generate initial food position
-    foodx = round(random.randrange(0, width - snake_block) / 10.0) * 10.0
-    foody = round(random.randrange(0, height - snake_block) / 10.0) * 10.0
+    def spawn_food():
+        """Spawn food at a random position not occupied by the snake."""
+        while True:
+            foodx = round(random.randrange(0, width - snake_block) / 10.0) * 10.0
+            foody = round(random.randrange(0, height - snake_block) / 10.0) * 10.0
+            if not is_collision(foodx, foody, snake_list):  # Ensure food is not on the snake
+                return foodx, foody
+
+    foodx, foody = spawn_food()  # Generate initial food position
 
     while not game_over:
         while game_close:
@@ -237,9 +243,6 @@ def gameLoop(ai_mode=False):
         x1 = (x1 + x1_change) % width
         y1 = (y1 + y1_change) % height
 
-        # Log the current position
-        print(f"Current Position: ({x1}, {y1})")
-
         display.fill(blue)  # Clear the display
         pygame.draw.rect(display, green, [foodx, foody, snake_block, snake_block])  # Draw food
         snake_head = [x1, y1]  # Create a new head for the snake
@@ -258,10 +261,16 @@ def gameLoop(ai_mode=False):
 
         # Check for food consumption
         if x1 == foodx and y1 == foody:
-            foodx = round(random.randrange(0, width - snake_block) / 10.0) * 10.0
-            foody = round(random.randrange(0, height - snake_block) / 10.0) * 10.0
             length_of_snake += 1  # Increase the length of the snake
             score += 1  # Increment score
+            foodx, foody = spawn_food()  # Spawn new food
+
+        # Check for available positions for food
+        if len(snake_list) >= (width * height) // (snake_block * snake_block):
+            message("You Win! No more space for food!", green)
+            pygame.display.update()
+            time.sleep(2)  # Pause for 2 seconds before quitting
+            game_over = True
 
         # Increase speed in AI mode
         current_speed = ai_speed if ai_mode else snake_speed
